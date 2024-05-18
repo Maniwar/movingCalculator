@@ -144,13 +144,16 @@ def main():
             st.subheader('Results')
             results_df = display_results(current_annual_expenses, new_annual_expenses, additional_expenses)
             
-            st.markdown(f"<h2 style='color: red;'>**Needed Annual Salary: ${required_new_salary:,.2f}**</h2>", unsafe_allow_html=True)
-            st.markdown(f"<h2 style='color: red;'>**Needed Monthly Salary: ${monthly_required_new_salary:,.2f}**</h2>", unsafe_allow_html=True)
-            st.markdown(f"<h2 style='color: red;'>**Percentage Increase: {percentage_increase:.2f}%**</h2>", unsafe_allow_html=True)
+            st.markdown(f"<h2 style='color: red;'>Needed Annual Salary: ${required_new_salary:,.2f}</h2>", unsafe_allow_html=True)
+            st.markdown(f"<h2 style='color: red;'>Needed Monthly Salary: ${monthly_required_new_salary:,.2f}</h2>", unsafe_allow_html=True)
+            st.markdown(f"<h2 style='color: red;'>Percentage Increase: {percentage_increase:.2f}%</h2>", unsafe_allow_html=True)
            
             st.divider()
             
             breakdown_df = display_breakdown(new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_common_expenses)
+
+            st.divider()
+            
             detailed_calculations = display_detailed_calculations(current_monthly_house_payment, current_annual_house_payment, current_total_property_tax, current_total_state_tax, current_annual_expenses, current_annual_common_expenses,
                                                                   new_monthly_house_payment, new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_common_expenses, new_annual_expenses,
                                                                   current_state_tax_rate, spending_increase_percentage, new_state_tax_rate, current_monthly_common_expenses)
