@@ -50,11 +50,12 @@ def display_inputs():
         current_monthly_common_expenses = st.number_input('Current monthly household and utility expenses ($)', min_value=0, step=100, format='%d', key='current_monthly_common_expenses')
     with col2:
         st.header('New Situation')
+        new_salary = st.number_input('Desired net annual salary ($)', min_value=0, step=1000, format='%d', key='new_salary')
         new_monthly_house_payment = st.number_input('Monthly house payment ($)', min_value=0, step=100, format='%d', key='new_monthly_house_payment')
         new_annual_property_tax = st.number_input('Annual property tax ($)', min_value=0, step=100, format='%d', key='new_annual_property_tax')
         new_state_tax_rate = st.number_input('State tax rate (%)', min_value=0.0, max_value=100.0, step=0.01, format='%.2f', key='new_state_tax_rate')
         spending_increase_percentage = st.number_input('Increase in spending (%) for current monthly household and utility expenses', min_value=0.0, max_value=100.0, step=0.01, format='%.2f', key='spending_increase_percentage')
-    return current_salary, current_monthly_house_payment, current_annual_property_tax, current_state_tax_rate, current_monthly_common_expenses, new_monthly_house_payment, new_annual_property_tax, new_state_tax_rate, spending_increase_percentage
+    return current_salary, current_monthly_house_payment, current_annual_property_tax, current_state_tax_rate, current_monthly_common_expenses, new_salary, new_monthly_house_payment, new_annual_property_tax, new_state_tax_rate, spending_increase_percentage
 
 # Function to display results
 def display_results(current_annual_expenses, new_annual_expenses, additional_expenses):
@@ -85,11 +86,11 @@ def display_detailed_calculations(current_monthly_house_payment, current_annual_
         'Calculation Steps': [
             f' - Current Annual House Payment: {current_monthly_house_payment} * 12 = ${current_annual_house_payment:,.2f}',
             f' - Current Annual Property Tax: ${current_total_property_tax:,.2f}',
-            f' - Current Annual State Tax: {current_salary} * {current_state_tax_rate / 100:.2f} = ${current_total_state_tax:,.2f}',
+            f' - Current Annual State Tax: ${current_salary:,.2f} * {current_state_tax_rate / 100:.2f} = ${current_total_state_tax:,.2f}',
             f' - Current Total Annual Expenses: ${current_annual_house_payment:,.2f} + ${current_total_property_tax:,.2f} + ${current_total_state_tax:,.2f} + ${current_annual_common_expenses:,.2f} = ${current_annual_expenses:,.2f}',
             f' - New Annual House Payment: {new_monthly_house_payment} * 12 = ${new_annual_house_payment:,.2f}',
             f' - New Annual Property Tax: ${new_total_property_tax:,.2f}',
-            f' - New Annual State Tax: {required_new_salary} * {new_state_tax_rate / 100:.2f} = ${new_total_state_tax:,.2f}',
+            f' - New Annual State Tax: ${required_new_salary:,.2f} * {new_state_tax_rate / 100:.2f} = ${new_total_state_tax:,.2f}',
             f' - New Annual Common Expenses: ${current_monthly_common_expenses} * 12 * (1 + {spending_increase_percentage / 100:.2f}) = ${new_common_expenses:,.2f}',
             f' - New Total Annual Expenses: ${new_annual_house_payment:,.2f} + ${new_total_property_tax:,.2f} + ${new_total_state_tax:,.2f} + ${new_common_expenses:,.2f} = ${new_annual_expenses:,.2f}'
         ]
@@ -124,12 +125,12 @@ def display_charts(current_annual_house_payment, current_total_property_tax, cur
 def main():
     st.title('Salary Comparison and Raise Calculator')
     
-    current_salary, current_monthly_house_payment, current_annual_property_tax, current_state_tax_rate, current_monthly_common_expenses, new_monthly_house_payment, new_annual_property_tax, new_state_tax_rate, spending_increase_percentage = display_inputs()
+    current_salary, current_monthly_house_payment, current_annual_property_tax, current_state_tax_rate, current_monthly_common_expenses, new_salary, new_monthly_house_payment, new_annual_property_tax, new_state_tax_rate, spending_increase_percentage = display_inputs()
 
     if st.button('Calculate Required Salary'):
         try:
             current_annual_expenses, current_annual_house_payment, current_total_property_tax, current_total_state_tax, current_annual_common_expenses, _ = calculate_annual_expenses(current_monthly_house_payment, current_annual_property_tax, current_state_tax_rate, current_monthly_common_expenses, 0, current_salary)
-            new_annual_expenses, new_annual_house_payment, new_total_property_tax, new_total_state_tax, _, new_common_expenses = calculate_annual_expenses(new_monthly_house_payment, new_annual_property_tax, new_state_tax_rate, current_monthly_common_expenses, spending_increase_percentage, required_new_salary)
+            new_annual_expenses, new_annual_house_payment, new_total_property_tax, new_total_state_tax, _, new_common_expenses = calculate_annual_expenses(new_monthly_house_payment, new_annual_property_tax, new_state_tax_rate, current_monthly_common_expenses, spending_increase_percentage, new_salary)
             
             additional_expenses = new_annual_expenses - current_annual_expenses
             required_new_salary = current_salary + additional_expenses
@@ -139,18 +140,59 @@ def main():
                 raise ValueError("Current salary cannot be zero.")
                 
             percentage_increase = ((required_new_salary - current_salary) / current_salary) * 100
+
+            # Include Font Awesome CSS
+            st.markdown(
+                """
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+                """,
+                unsafe_allow_html=True
+            )
+            
+            # Add custom styles
+            st.markdown(
+                """
+                <style>
+                .result-box {
+                    border: 2px solid red;
+                    padding: 10px;
+                    border-radius: 10px;
+                    text-align: center;
+                    background-color: #ffebeb;
+                }
+                .result-box h2 {
+                    color: red;
+                    font-weight: bold;
+                }
+                .result-box .fa-icon {
+                    font-size: 24px;
+                    margin-right: 10px;
+                }
+                </style>
+                """,
+                unsafe_allow_html=True
+            )
+            
+            # Display the results prominently
+            st.markdown(
+                f"""
+                <div class="result-box">
+                    <h2><i class="fas fa-dollar-sign fa-icon"></i>Needed Annual Salary: ${required_new_salary:,.2f}</h2>
+                    <h2><i class="fas fa-calendar-alt fa-icon"></i>Needed Monthly Salary: ${monthly_required_new_salary:,.2f}</h2>
+                    <h2><i class="fas fa-percentage fa-icon"></i>Percentage Increase: {percentage_increase:.2f}%</h2>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+            st.divider()
             
             results_df = display_results(current_annual_expenses, new_annual_expenses, additional_expenses)
-            
             breakdown_df = display_breakdown(new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_common_expenses)
             detailed_calculations = display_detailed_calculations(current_monthly_house_payment, current_annual_house_payment, current_total_property_tax, current_total_state_tax, current_annual_expenses, current_annual_common_expenses,
                                                                   new_monthly_house_payment, new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_common_expenses, new_annual_expenses,
                                                                   current_state_tax_rate, spending_increase_percentage, new_state_tax_rate, current_monthly_common_expenses)
             display_charts(current_annual_house_payment, current_total_property_tax, current_total_state_tax, current_annual_common_expenses, new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_common_expenses)
-    
-            st.markdown(f"<h2 style='color: red;'>**Needed Annual Salary: ${required_new_salary:,.2f}**</h2>", unsafe_allow_html=True)
-            st.markdown(f"<h2 style='color: red;'>**Needed Monthly Salary: ${monthly_required_new_salary:,.2f}**</h2>", unsafe_allow_html=True)
-            st.markdown(f"<h2 style='color: red;'>**Percentage Increase: {percentage_increase:.2f}%**</h2>", unsafe_allow_html=True)
     
             excel_report = create_excel_report(results_df, breakdown_df, detailed_calculations)
             if excel_report:
@@ -167,47 +209,47 @@ def main():
     with expander:
         st.markdown(
         """
-        <p style="font-size:14px;">Legal Statement</p>
-        <p style="font-size:14px;">
-        This application ("App") is provided "as is" without any warranties, express or implied. The information provided by the App is intended to be used for informational purposes only and not as a substitute for professional advice, diagnosis, or treatment. Always seek the advice of your qualified financial advisor with any questions you may have regarding your finances. Never disregard professional advice or delay in seeking it because of something you have read on the App.
-        </p>
-        <p style="font-size:14px;">
-        While we strive to provide accurate information, we make no representation and assume no responsibility for the accuracy of information on or available through the App.
-        </p>
-        <p style="font-size:14px;">
-        The App does not endorse any specific product, service, or treatment. The use of any information provided by the App is solely at your own risk. The App and its owners or operators are not liable for any direct, indirect, punitive, incidental, special or consequential damages that result from the use of, or inability to use, this site.
-        </p>
-        <p style="font-size:14px;">
-        Certain state laws do not allow limitations on implied warranties or the exclusion or limitation of certain damages. If these laws apply to you, some or all of the above disclaimers, exclusions, or limitations may not apply to you, and you might have additional rights.
-        </p>
-        <p style="font-size:14px;">
-        By using this App, you agree to abide by the terms of this legal statement.
-        </p>
-        <p style="font-size:14px;">Data Privacy Statement</p>
-        <p style="font-size:14px;">
-        This application ("App") respects your privacy. This statement outlines our practices regarding your data.
-        </p>
-        <p style="font-size:14px;">
-        <b>Information Collection:</b> The only data the App collects is the information you enter when you use the App. We do not collect any personal data, including contact information.
-        </p>
-        <p style="font-size:14px;">
-        <b>Information Usage:</b> Your input data is used solely to provide the App's services, specifically to calculate and compare salary requirements. All data is processed in real time and is not stored on our servers or databases beyond this purpose.
-        </p>
-        <p style="font-size:14px;">
-        <b>Information Sharing:</b> We do not share your data with any third parties.
-        </p>
-        <p style="font-size:14px;">
-        <b>User Rights:</b> As we do not store your data beyond the current session, we cannot facilitate requests for data access, correction, or deletion.
-        </p>
-        <p style="font-size:14px;">
-        <b>Security Measures:</b> We implement security measures to protect your data during transmission, but no system is completely secure. We cannot fully eliminate the risks associated with data transmission.
-        </p>
-        <p style="font-size:14px;">
-        <b>Changes to this Policy:</b> Any changes to this data privacy statement will be updated on the App.
-        </p>
-        <p style="font-size:14px;">
-        <b>Ownership of Data:</b> All output data generated by the App, including but not limited to the analysis and calculations, belongs to the owner of the App. The owner retains the right to use, reproduce, distribute, display, and perform the data in any manner and for any purpose. The user acknowledges and agrees that any information input into the App may be used in this way, subject to the limitations set out in the Data Privacy Statement.
-        </p>
+<p style="font-size:14px;">Legal Statement</p>
+<p style="font-size:14px;">
+This application ("App") is provided "as is" without any warranties, express or implied. The information provided by the App is intended to be used for informational purposes only and not as a substitute for professional advice, diagnosis, or treatment. Always seek the advice of your qualified financial advisor with any questions you may have regarding your finances. Never disregard professional advice or delay in seeking it because of something you have read on the App.
+</p>
+<p style="font-size:14px;">
+While we strive to provide accurate information, we make no representation and assume no responsibility for the accuracy of information on or available through the App.
+</p>
+<p style="font-size:14px;">
+The App does not endorse any specific product, service, or treatment. The use of any information provided by the App is solely at your own risk. The App and its owners or operators are not liable for any direct, indirect, punitive, incidental, special or consequential damages that result from the use of, or inability to use, this site.
+</p>
+<p style="font-size:14px;">
+Certain state laws do not allow limitations on implied warranties or the exclusion or limitation of certain damages. If these laws apply to you, some or all of the above disclaimers, exclusions, or limitations may not apply to you, and you might have additional rights.
+</p>
+<p style="font-size:14px;">
+By using this App, you agree to abide by the terms of this legal statement.
+</p>
+<p style="font-size:14px;">Data Privacy Statement</p>
+<p style="font-size:14px;">
+This application ("App") respects your privacy. This statement outlines our practices regarding your data.
+</p>
+<p style="font-size:14px;">
+<b>Information Collection:</b> The only data the App collects is the information you enter when you use the App. We do not collect any personal data, including contact information.
+</p>
+<p style="font-size:14px;">
+<b>Information Usage:</b> Your input data is used solely to provide the App's services, specifically to calculate and compare salary requirements. All data is processed in real time and is not stored on our servers or databases beyond this purpose.
+</p>
+<p style="font-size:14px;">
+<b>Information Sharing:</b> We do not share your data with any third parties.
+</p>
+<p style="font-size:14px;">
+<b>User Rights:</b> As we do not store your data beyond the current session, we cannot facilitate requests for data access, correction, or deletion.
+</p>
+<p style="font-size:14px;">
+<b>Security Measures:</b> We implement security measures to protect your data during transmission, but no system is completely secure. We cannot fully eliminate the risks associated with data transmission.
+</p>
+<p style="font-size:14px;">
+<b>Changes to this Policy:</b> Any changes to this data privacy statement will be updated on the App.
+</p>
+<p style="font-size:14px;">
+<b>Ownership of Data:</b> All output data generated by the App, including but not limited to the analysis and calculations, belongs to the owner of the App. The owner retains the right to use, reproduce, distribute, display, and perform the data in any manner and for any purpose. The user acknowledges and agrees that any information input into the App may be used in this way, subject to the limitations set out in the Data Privacy Statement.
+</p>
         """,
         unsafe_allow_html=True,
     )
