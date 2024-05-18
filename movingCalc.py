@@ -57,11 +57,14 @@ def display_inputs():
     return current_salary, current_monthly_house_payment, current_annual_property_tax, current_state_tax_rate, current_monthly_common_expenses, new_monthly_house_payment, new_annual_property_tax, new_state_tax_rate, spending_increase_percentage
 
 # Function to display results
-def display_results(current_annual_expenses, new_annual_expenses, additional_expenses, required_new_salary, monthly_required_new_salary):
+def display_results(current_annual_expenses, new_annual_expenses, additional_expenses, required_new_salary, monthly_required_new_salary, percentage_increase):
     st.subheader('Results')
+    st.markdown(f"## **Needed Annual Salary: ${required_new_salary:,.2f}**")
+    st.markdown(f"## **Needed Monthly Salary: ${monthly_required_new_salary:,.2f}**")
+    st.markdown(f"## **Percentage Increase: {percentage_increase:.2f}%**")
     results_data = {
-        'Description': ['Current Annual Expenses', 'New Annual Expenses', 'Additional Expenses', 'Needed Annual Salary', 'Needed Monthly Salary'],
-        'Amount ($)': [f'{current_annual_expenses:,.2f}', f'{new_annual_expenses:,.2f}', f'{additional_expenses:,.2f}', f'{required_new_salary:,.2f}', f'{monthly_required_new_salary:,.2f}']
+        'Description': ['Current Annual Expenses', 'New Annual Expenses', 'Additional Expenses'],
+        'Amount ($)': [f'{current_annual_expenses:,.2f}', f'{new_annual_expenses:,.2f}', f'{additional_expenses:,.2f}']
     }
     results_df = pd.DataFrame(results_data)
     st.table(results_df)
@@ -134,8 +137,14 @@ def main():
         additional_expenses = new_annual_expenses - current_annual_expenses
         required_new_salary = current_salary + additional_expenses
         monthly_required_new_salary = required_new_salary / 12
+        percentage_increase = ((required_new_salary - current_salary) / current_salary) * 100
         
-        results_df = display_results(current_annual_expenses, new_annual_expenses, additional_expenses, required_new_salary, monthly_required_new_salary)
+        st.subheader('Results')
+        st.markdown(f"## **Needed Annual Salary: ${required_new_salary:,.2f}**")
+        st.markdown(f"## **Needed Monthly Salary: ${monthly_required_new_salary:,.2f}**")
+        st.markdown(f"## **Percentage Increase: {percentage_increase:.2f}%**")
+
+        results_df = display_results(current_annual_expenses, new_annual_expenses, additional_expenses, required_new_salary, monthly_required_new_salary, percentage_increase)
         breakdown_df = display_breakdown(new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_common_expenses)
         detailed_calculations = display_detailed_calculations(current_monthly_house_payment, current_annual_house_payment, current_total_property_tax, current_total_state_tax, current_annual_expenses, current_annual_common_expenses,
                                                               new_monthly_house_payment, new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_common_expenses, new_annual_expenses,
