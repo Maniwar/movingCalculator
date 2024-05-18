@@ -13,7 +13,7 @@ def calculate_annual_expenses(monthly_payment, annual_property_tax, state_tax_ra
     annual_common_expenses = monthly_common_expenses * 12
     new_common_expenses = annual_common_expenses * (1 + spending_increase_percentage / 100)
     total_annual_expenses = annual_house_payment + total_property_tax + total_state_tax + new_common_expenses
-    return total_annual_expenses, annual_house_payment, total_property_tax, total_state_tax, new_common_expenses
+    return total_annual_expenses, annual_house_payment, total_property_tax, total_state_tax, annual_common_expenses, new_common_expenses
 
 # Function to create a downloadable Excel file
 def create_excel_report(results_df, breakdown_df, detailed_calculations):
@@ -79,7 +79,7 @@ def display_breakdown(new_annual_house_payment, new_total_property_tax, new_tota
     return breakdown_df
 
 # Function to display detailed calculations
-def display_detailed_calculations(current_monthly_house_payment, current_annual_house_payment, current_total_property_tax, current_total_state_tax, current_annual_expenses,
+def display_detailed_calculations(current_monthly_house_payment, current_annual_house_payment, current_total_property_tax, current_total_state_tax, current_annual_expenses, current_annual_common_expenses,
                                   new_monthly_house_payment, new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_common_expenses, new_annual_expenses, current_state_tax_rate, spending_increase_percentage, new_state_tax_rate):
     st.subheader('Detailed Calculations')
     detailed_calculations = {
@@ -128,8 +128,8 @@ def main():
     current_salary, current_monthly_house_payment, current_annual_property_tax, current_state_tax_rate, current_monthly_common_expenses, new_monthly_house_payment, new_annual_property_tax, new_state_tax_rate, spending_increase_percentage = display_inputs()
 
     if st.button('Calculate Required Salary'):
-        current_annual_expenses, current_annual_house_payment, current_total_property_tax, current_total_state_tax, current_annual_common_expenses = calculate_annual_expenses(current_monthly_house_payment, current_annual_property_tax, current_state_tax_rate, current_monthly_common_expenses, 0)
-        new_annual_expenses, new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_common_expenses = calculate_annual_expenses(new_monthly_house_payment, new_annual_property_tax, new_state_tax_rate, current_monthly_common_expenses, spending_increase_percentage)
+        current_annual_expenses, current_annual_house_payment, current_total_property_tax, current_total_state_tax, current_annual_common_expenses, _ = calculate_annual_expenses(current_monthly_house_payment, current_annual_property_tax, current_state_tax_rate, current_monthly_common_expenses, 0)
+        new_annual_expenses, new_annual_house_payment, new_total_property_tax, new_total_state_tax, _, new_common_expenses = calculate_annual_expenses(new_monthly_house_payment, new_annual_property_tax, new_state_tax_rate, current_monthly_common_expenses, spending_increase_percentage)
         
         additional_expenses = new_annual_expenses - current_annual_expenses
         required_new_salary = current_salary + additional_expenses
@@ -137,7 +137,7 @@ def main():
         
         results_df = display_results(current_annual_expenses, new_annual_expenses, additional_expenses, required_new_salary, monthly_required_new_salary)
         breakdown_df = display_breakdown(new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_common_expenses)
-        detailed_calculations = display_detailed_calculations(current_monthly_house_payment, current_annual_house_payment, current_total_property_tax, current_total_state_tax, current_annual_expenses,
+        detailed_calculations = display_detailed_calculations(current_monthly_house_payment, current_annual_house_payment, current_total_property_tax, current_total_state_tax, current_annual_expenses, current_annual_common_expenses,
                                                               new_monthly_house_payment, new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_common_expenses, new_annual_expenses,
                                                               current_state_tax_rate, spending_increase_percentage, new_state_tax_rate)
         display_charts(current_annual_house_payment, current_total_property_tax, current_total_state_tax, current_annual_common_expenses, new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_common_expenses)
