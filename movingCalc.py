@@ -45,18 +45,22 @@ def create_excel_report(results_df, breakdown_df, detailed_calculations):
 # Define the app
 def main():
     st.title('Salary Comparison and Raise Calculator')
-    
-    st.header('Current Situation')
-    current_salary = st.number_input('Enter your current net annual salary ($)', min_value=0, step=1000, format='%d')
-    current_monthly_house_payment = st.number_input('Enter your current monthly house payment ($)', min_value=0, step=100, format='%d')
-    current_annual_property_tax = st.number_input('Enter your current annual property tax ($)', min_value=0, step=100, format='%d')
-    current_state_tax_rate = st.number_input('Enter your current state tax rate (%)', min_value=0.0, max_value=100.0, step=0.01, format='%.2f')
 
-    st.header('New Situation')
-    new_monthly_house_payment = st.number_input('Enter your new monthly house payment ($)', min_value=0, step=100, format='%d')
-    new_annual_property_tax = st.number_input('Enter your new annual property tax ($)', min_value=0, step=100, format='%d')
-    new_state_tax_rate = st.number_input('Enter your new state tax rate (%)', min_value=0.0, max_value=100.0, step=0.01, format='%.2f')
-    spending_increase_percentage = st.number_input('Enter the percentage increase in common spending categories (%)', min_value=0.0, max_value=100.0, step=0.01, format='%.2f')
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.header('Current Situation')
+        current_salary = st.number_input('Net annual salary ($)', min_value=0, step=1000, format='%d')
+        current_monthly_house_payment = st.number_input('Monthly house payment ($)', min_value=0, step=100, format='%d')
+        current_annual_property_tax = st.number_input('Annual property tax ($)', min_value=0, step=100, format='%d')
+        current_state_tax_rate = st.number_input('State tax rate (%)', min_value=0.0, max_value=100.0, step=0.01, format='%.2f')
+
+    with col2:
+        st.header('New Situation')
+        new_monthly_house_payment = st.number_input('Monthly house payment ($)', min_value=0, step=100, format='%d')
+        new_annual_property_tax = st.number_input('Annual property tax ($)', min_value=0, step=100, format='%d')
+        new_state_tax_rate = st.number_input('State tax rate (%)', min_value=0.0, max_value=100.0, step=0.01, format='%.2f')
+        spending_increase_percentage = st.number_input('Increase in spending (%)', min_value=0.0, max_value=100.0, step=0.01, format='%.2f')
 
     if st.button('Calculate Required Salary'):
         # Calculate annual expenses for current and new situations
@@ -87,14 +91,13 @@ def main():
         st.table(breakdown_df)
 
         # Display detailed calculations
+        st.subheader('Detailed Calculations')
         detailed_calculations = {
-            '**Current Situation:**': [
+            'Calculation Steps': [
                 f' - Current Annual House Payment: {current_monthly_house_payment} * 12 = ${current_annual_house_payment:,.2f}',
                 f' - Current Annual Property Tax: ${current_total_property_tax:,.2f}',
                 f' - Current Annual State Tax: (${current_annual_house_payment:,.2f} + ${current_total_property_tax:,.2f}) * {current_state_tax_rate / 100:.2f} = ${current_total_state_tax:,.2f}',
-                f' - Current Total Annual Expenses: ${current_annual_house_payment:,.2f} + ${current_total_property_tax:,.2f} + ${current_total_state_tax:,.2f} = ${current_annual_expenses:,.2f}'
-            ],
-            '**New Situation:**': [
+                f' - Current Total Annual Expenses: ${current_annual_house_payment:,.2f} + ${current_total_property_tax:,.2f} + ${current_total_state_tax:,.2f} = ${current_annual_expenses:,.2f}',
                 f' - New Annual House Payment: {new_monthly_house_payment} * 12 = ${new_annual_house_payment:,.2f}',
                 f' - New Annual Property Tax: ${new_total_property_tax:,.2f}',
                 f' - New Annual State Tax: (${new_annual_house_payment:,.2f} + ${new_total_property_tax:,.2f}) * {new_state_tax_rate / 100:.2f} = ${new_total_state_tax:,.2f}',
@@ -102,11 +105,8 @@ def main():
                 f' - New Total Annual Expenses: ${new_annual_house_payment:,.2f} + ${new_total_property_tax:,.2f} + ${new_total_state_tax:,.2f} + ${new_spending_increase:,.2f} = ${new_annual_expenses:,.2f}'
             ]
         }
-        st.subheader('Detailed Calculations')
-        for section, calculations in detailed_calculations.items():
-            st.write(section)
-            for calc in calculations:
-                st.write(calc)
+        for calc in detailed_calculations['Calculation Steps']:
+            st.write(calc)
 
         # Bar chart comparing current and new annual expenses by category
         st.subheader('Comparison of Current and New Annual Expenses')
