@@ -116,6 +116,8 @@ def display_charts(current_annual_house_payment, current_total_property_tax, cur
         'Category': ['House Payment', 'Property Tax', 'State Tax', 'Common Expenses'],
         'New Annual ($)': [new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_common_expenses]
     }
+    
+    st.divider()
     new_expense_proportion_df = pd.DataFrame(new_expense_proportion_data)
     fig = px.pie(new_expense_proportion_df, values='New Annual ($)', names='Category', title='Proportion of Each Category in New Annual Expenses')
     st.plotly_chart(fig)
@@ -157,7 +159,9 @@ def main():
             detailed_calculations = display_detailed_calculations(current_monthly_house_payment, current_annual_house_payment, current_total_property_tax, current_total_state_tax, current_annual_expenses, current_annual_common_expenses,
                                                                   new_monthly_house_payment, new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_common_expenses, new_annual_expenses,
                                                                   current_state_tax_rate, spending_increase_percentage, new_state_tax_rate, current_monthly_common_expenses)
+            
             st.divider()
+            
             display_charts(current_annual_house_payment, current_total_property_tax, current_total_state_tax, current_annual_common_expenses, new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_common_expenses)
     
             excel_report = create_excel_report(results_df, breakdown_df, detailed_calculations)
