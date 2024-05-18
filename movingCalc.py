@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import xlsxwriter
 from io import BytesIO
 
 st.set_page_config(layout="wide")
