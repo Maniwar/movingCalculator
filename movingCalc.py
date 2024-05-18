@@ -60,6 +60,7 @@ def display_results(current_annual_expenses, new_annual_expenses, additional_exp
     }
     results_df = pd.DataFrame(results_data)
     st.table(results_df)
+    return results_df
 
 # Function to display breakdown of additional expenses
 def display_breakdown(new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_spending_increase):
@@ -74,7 +75,7 @@ def display_breakdown(new_annual_house_payment, new_total_property_tax, new_tota
 
 # Function to display detailed calculations
 def display_detailed_calculations(current_monthly_house_payment, current_annual_house_payment, current_total_property_tax, current_total_state_tax, current_annual_expenses,
-                                  new_monthly_house_payment, new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_spending_increase, new_annual_expenses):
+                                  new_monthly_house_payment, new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_spending_increase, new_annual_expenses, current_state_tax_rate, spending_increase_percentage, new_state_tax_rate):
     st.subheader('Detailed Calculations')
     detailed_calculations = {
         'Calculation Steps': [
@@ -129,10 +130,11 @@ def main():
         required_new_salary = current_salary + additional_expenses
         monthly_required_new_salary = required_new_salary / 12
         
-        display_results(current_annual_expenses, new_annual_expenses, additional_expenses, required_new_salary, monthly_required_new_salary)
+        results_df = display_results(current_annual_expenses, new_annual_expenses, additional_expenses, required_new_salary, monthly_required_new_salary)
         breakdown_df = display_breakdown(new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_spending_increase)
         detailed_calculations = display_detailed_calculations(current_monthly_house_payment, current_annual_house_payment, current_total_property_tax, current_total_state_tax, current_annual_expenses,
-                                                              new_monthly_house_payment, new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_spending_increase, new_annual_expenses)
+                                                              new_monthly_house_payment, new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_spending_increase, new_annual_expenses,
+                                                              current_state_tax_rate, spending_increase_percentage, new_state_tax_rate)
         display_charts(current_annual_house_payment, current_total_property_tax, current_total_state_tax, current_spending_increase, new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_spending_increase)
 
         excel_report = create_excel_report(results_df, breakdown_df, detailed_calculations)
