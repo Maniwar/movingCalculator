@@ -1,78 +1,19 @@
-import streamlit as st
-import pandas as pd
-import plotly.express as px
-from io import BytesIO
-
-st.set_page_config(layout="wide")
-
 # Helper function to calculate annual expenses
 def calculate_annual_expenses(monthly_payment, state_income_tax_rate, current_monthly_common_expenses, spending_increase_percentage, salary):
     annual_house_payment = monthly_payment * 12
     total_state_income_tax = salary * (state_income_tax_rate / 100)
-    annual_common_expenses = current_monthly_common_expenses * 12
-    new_common_expenses = annual_common_expenses * (1 + spending_increase_percentage / 100)
+    current_annual_common_expenses = current_monthly_common_expenses * 12
+    new_common_expenses = current_annual_common_expenses * (1 + spending_increase_percentage / 100)
     total_annual_expenses = annual_house_payment + total_state_income_tax + new_common_expenses
-    return total_annual_expenses, annual_house_payment, total_state_income_tax, annual_common_expenses, new_common_expenses
+    return total_annual_expenses, annual_house_payment, total_state_income_tax, current_annual_common_expenses, new_common_expenses
 
-
-# Function to create a downloadable Excel file
-def create_excel_report(results_df, breakdown_df, detailed_calculations):
-    try:
-        output = BytesIO()
-        with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-            results_df.to_excel(writer, index=False, sheet_name='Results')
-            breakdown_df.to_excel(writer, index=False, sheet_name='Breakdown')
-            workbook = writer.book
-            detailed_worksheet = workbook.add_worksheet('Detailed Calculations')
-            row = 0
-            for section, calculations in detailed_calculations.items():
-                detailed_worksheet.write(row, 0, section)
-                row += 1
-                for calc in calculations:
-                    detailed_worksheet.write(row, 0, calc)
-                    row += 1
-                row += 1
-        output.seek(0)
-        return output
-    except Exception as e:
-        st.error(f"Error creating Excel report: {e}")
-        return None
-
-# Function to display inputs
-def display_inputs():
-    col1, col2 = st.columns(2)
-    with col1:
-        st.header('Current Situation')
-        current_salary = st.number_input('Net annual salary ($)', min_value=0, step=1000, format='%d', key='current_salary')
-        current_monthly_house_payment = st.number_input('Monthly house payment ($)', min_value=0, step=100, format='%d', key='current_monthly_house_payment')
-        current_annual_property_tax = st.number_input('Annual property tax ($)', min_value=0, step=100, format='%d', key='current_annual_property_tax')
-        current_state_income_tax_rate = st.number_input('State income tax rate (%)', min_value=0.0, max_value=100.0, step=0.01, format='%.2f', key='current_state_income_tax_rate')
-        current_monthly_common_expenses = st.number_input('Current monthly household and utility expenses ($)', min_value=0, step=100, format='%d', key='current_monthly_common_expenses')
-    with col2:
-        st.header('New Situation')
-        new_salary = st.number_input('Desired net annual salary ($)', min_value=0, step=1000, format='%d', key='new_salary')
-        new_monthly_house_payment = st.number_input('Monthly house payment ($)', min_value=0, step=100, format='%d', key='new_monthly_house_payment')
-        new_annual_property_tax = st.number_input('Annual property tax ($)', min_value=0, step=100, format='%d', key='new_annual_property_tax')
-        new_state_income_tax_rate = st.number_input('State income tax rate (%)', min_value=0.0, max_value=100.0, step=0.01, format='%.2f', key='new_state_income_tax_rate')
-        spending_increase_percentage = st.number_input('Increase in spending (%) for current monthly household and utility expenses', min_value=0.0, max_value=100.0, step=0.01, format='%.2f', key='spending_increase_percentage')
-    return current_salary, current_monthly_house_payment, current_annual_property_tax, current_state_income_tax_rate, current_monthly_common_expenses, new_salary, new_monthly_house_payment, new_annual_property_tax, new_state_income_tax_rate, spending_increase_percentage
-
-# Function to display results
-def display_results(current_annual_expenses, new_annual_expenses, additional_expenses):
-    results_data = {
-        'Description': ['Current Annual Expenses', 'New Annual Expenses', 'Additional Expenses'],
-        'Amount ($)': [f'{current_annual_expenses:,.2f}', f'{new_annual_expenses:,.2f}', f'{additional_expenses:,.2f}']
-    }
-    results_df = pd.DataFrame(results_data)
-    st.table(results_df)
-    return results_df
 
 # Function to display breakdown of additional expenses
-def display_breakdown(new_annual_house_payment, new_total_state_income_tax, new_common_expenses):
+def display_breakdown(new_annual_house_payment, new_total_state_income_tax, new_common_expenses, current_annual_common_expenses):
     st.subheader('Breakdown of Additional Expenses')
     breakdown_data = {
-        'Description': ['New Annual House Payment', 'New Annual State Income Tax', 'New Annual Common Expenses'],
-        'Amount ($)': [f'{new_annual_house_payment:,.2f}', f'{new_total_state_income_tax:,.2f}', f'{new_common_expenses:,.2f}']
+        'Description': ['New Annual House Payment', 'New Annual State Income Tax', 'Current Annual Common Expenses', 'New Annual Common Expenses'],
+        'Amount ($)': [f'{new_annual_house_payment:,.2f}', f'{new_total_state_income_tax:,.2f}', f'{current_annual_common_expenses:,.2f}', f'{new_common_expenses:,.2f}']
     }
     breakdown_df = pd.DataFrame(breakdown_data)
     st.table(breakdown_df)
@@ -83,35 +24,6 @@ def display_detailed_calculations(current_monthly_house_payment, current_annual_
                                   new_monthly_house_payment, new_annual_house_payment, new_annual_property_tax, new_total_state_income_tax, new_common_expenses, new_annual_expenses, current_state_income_tax_rate, spending_increase_percentage, new_state_income_tax_rate, current_monthly_common_expenses, current_salary, new_salary):
     st.subheader('Detailed Calculations')
 
-    # Add custom styles
-    st.markdown(
-        """
-        <style>
-        .calc-box {
-            border: 2px solid #e0e0e0;
-            padding: 10px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            background-color: #f9f9f9;
-        }
-        .calc-box h4 {
-            color: #333;
-            font-weight: bold;
-        }
-        .calc-box p {
-            color: #555;
-            font-size: 16px;
-        }
-        .fa-icon {
-            font-size: 18px;
-            margin-right: 10px;
-            color: #555;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-
     detailed_calculations = {
         'Calculation Steps': [
             f'<h4><i class="fas fa-home fa-icon"></i>Current Annual House Payment:</h4> <p>{current_monthly_house_payment} (monthly house payment) * 12 = ${current_annual_house_payment:,.2f}</p>',
@@ -121,7 +33,6 @@ def display_detailed_calculations(current_monthly_house_payment, current_annual_
             f'<h4><i class="fas fa-home fa-icon"></i>New Annual House Payment:</h4> <p>{new_monthly_house_payment} (new monthly house payment) * 12 = ${new_annual_house_payment:,.2f}</p>',
             f'<h4><i class="fas fa-landmark fa-icon"></i>New Annual Property Tax:</h4> <p>${new_annual_property_tax:,.2f}</p>',
             f'<h4><i class="fas fa-file-invoice-dollar fa-icon"></i>New Annual State Income Tax:</h4> <p>${new_salary:,.2f} (desired new salary) * {new_state_income_tax_rate / 100:.2f} = ${new_total_state_income_tax:,.2f}</p>',
-            f'<h4><i class="fas fa-calculator fa-icon"></i>New Annual Common Expenses:</h4> <p>${current_monthly_common_expenses} (current monthly common expenses) * 12 * (1 + {spending_increase_percentage / 100:.2f}) = ${new_common_expenses:,.2f}</p>',
             f'<h4><i class="fas fa-calculator fa-icon"></i>New Total Annual Expenses:</h4> <p>${new_annual_house_payment:,.2f} (House Payment) + ${new_total_state_income_tax:,.2f} (State Income Tax) + ${new_common_expenses:,.2f} (Common Expenses) = ${new_annual_expenses:,.2f}</p>'
         ]
     }
@@ -133,12 +44,12 @@ def display_detailed_calculations(current_monthly_house_payment, current_annual_
 
 # Function to display charts
 def display_charts(current_annual_house_payment, current_total_state_income_tax, current_annual_common_expenses,
-                   new_annual_house_payment, new_total_state_income_tax, new_common_expenses):
+                   new_annual_house_payment, new_total_state_income_tax, new_common_expenses, current_annual_common_expenses):
     st.subheader('Comparison of Current and New Annual Expenses')
     expense_comparison_data = {
-        'Category': ['House Payment', 'State Income Tax', 'Common Expenses'],
-        'Current Annual ($)': [current_annual_house_payment, current_total_state_income_tax, current_annual_common_expenses],
-        'New Annual ($)': [new_annual_house_payment, new_total_state_income_tax, new_common_expenses]
+        'Category': ['House Payment', 'State Income Tax', 'Current Common Expenses', 'New Common Expenses'],
+        'Current Annual ($)': [current_annual_house_payment, current_total_state_income_tax, current_annual_common_expenses, 0],
+        'New Annual ($)': [new_annual_house_payment, new_total_state_income_tax, 0, new_common_expenses]
     }
     expense_comparison_df = pd.DataFrame(expense_comparison_data)
     fig = px.bar(expense_comparison_df, x='Category', y=['Current Annual ($)', 'New Annual ($)'], barmode='group', title='Comparison of Current and New Annual Expenses by Category')
@@ -222,7 +133,7 @@ def main():
             st.divider()
             
             results_df = display_results(current_annual_expenses, new_annual_expenses, net_new_expenses)
-            breakdown_df = display_breakdown(new_annual_house_payment, new_total_state_income_tax, new_common_expenses)
+            breakdown_df = display_breakdown(new_annual_house_payment, new_total_state_income_tax, new_common_expenses, current_annual_common_expenses)
 
             st.divider()
             
@@ -232,7 +143,7 @@ def main():
             
             st.divider()
             
-            display_charts(current_annual_house_payment, current_total_state_income_tax, current_annual_common_expenses, new_annual_house_payment, new_total_state_income_tax, new_common_expenses)
+            display_charts(current_annual_house_payment, current_total_state_income_tax, current_annual_common_expenses, new_annual_house_payment, new_total_state_income_tax, new_common_expenses, current_annual_common_expenses)
     
             excel_report = create_excel_report(results_df, breakdown_df, detailed_calculations)
             if excel_report:
