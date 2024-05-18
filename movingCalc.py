@@ -6,10 +6,10 @@ from io import BytesIO
 st.set_page_config(layout="wide")
 
 # Helper function to calculate annual expenses
-def calculate_annual_expenses(monthly_payment, annual_property_tax, state_tax_rate, monthly_common_expenses, spending_increase_percentage, salary):
+def calculate_annual_expenses(monthly_payment, annual_property_tax, state_income_tax_rate, monthly_common_expenses, spending_increase_percentage, salary):
     annual_house_payment = monthly_payment * 12
     total_property_tax = annual_property_tax
-    total_state_income_tax = salary * (state_tax_rate / 100)
+    total_state_income_tax = salary * (state_income_tax_rate / 100)
     annual_common_expenses = monthly_common_expenses * 12
     new_common_expenses = annual_common_expenses * (1 + spending_increase_percentage / 100)
     total_annual_expenses = annual_house_payment + total_property_tax + total_state_income_tax + new_common_expenses
@@ -46,16 +46,16 @@ def display_inputs():
         current_salary = st.number_input('Net annual salary ($)', min_value=0, step=1000, format='%d', key='current_salary')
         current_monthly_house_payment = st.number_input('Monthly house payment ($)', min_value=0, step=100, format='%d', key='current_monthly_house_payment')
         current_annual_property_tax = st.number_input('Annual property tax ($)', min_value=0, step=100, format='%d', key='current_annual_property_tax')
-        current_state_tax_rate = st.number_input('State tax rate (%)', min_value=0.0, max_value=100.0, step=0.01, format='%.2f', key='current_state_tax_rate')
+        current_state_income_tax_rate = st.number_input('State income tax rate (%)', min_value=0.0, max_value=100.0, step=0.01, format='%.2f', key='current_state_income_tax_rate')
         current_monthly_common_expenses = st.number_input('Current monthly household and utility expenses ($)', min_value=0, step=100, format='%d', key='current_monthly_common_expenses')
     with col2:
         st.header('New Situation')
         new_salary = st.number_input('Desired net annual salary ($)', min_value=0, step=1000, format='%d', key='new_salary')
         new_monthly_house_payment = st.number_input('Monthly house payment ($)', min_value=0, step=100, format='%d', key='new_monthly_house_payment')
         new_annual_property_tax = st.number_input('Annual property tax ($)', min_value=0, step=100, format='%d', key='new_annual_property_tax')
-        new_state_tax_rate = st.number_input('State tax rate (%)', min_value=0.0, max_value=100.0, step=0.01, format='%.2f', key='new_state_tax_rate')
+        new_state_income_tax_rate = st.number_input('State income tax rate (%)', min_value=0.0, max_value=100.0, step=0.01, format='%.2f', key='new_state_income_tax_rate')
         spending_increase_percentage = st.number_input('Increase in spending (%) for current monthly household and utility expenses', min_value=0.0, max_value=100.0, step=0.01, format='%.2f', key='spending_increase_percentage')
-    return current_salary, current_monthly_house_payment, current_annual_property_tax, current_state_tax_rate, current_monthly_common_expenses, new_salary, new_monthly_house_payment, new_annual_property_tax, new_state_tax_rate, spending_increase_percentage
+    return current_salary, current_monthly_house_payment, current_annual_property_tax, current_state_income_tax_rate, current_monthly_common_expenses, new_salary, new_monthly_house_payment, new_annual_property_tax, new_state_income_tax_rate, spending_increase_percentage
 
 # Function to display results
 def display_results(current_annual_expenses, new_annual_expenses, additional_expenses):
@@ -80,19 +80,19 @@ def display_breakdown(new_annual_house_payment, new_total_property_tax, new_tota
 
 # Function to display detailed calculations
 def display_detailed_calculations(current_monthly_house_payment, current_annual_house_payment, current_total_property_tax, current_total_state_income_tax, current_annual_expenses, current_annual_common_expenses,
-                                  new_monthly_house_payment, new_annual_house_payment, new_total_property_tax, new_total_state_income_tax, new_common_expenses, new_annual_expenses, current_state_tax_rate, spending_increase_percentage, new_state_tax_rate, current_monthly_common_expenses, current_salary, required_new_salary):
+                                  new_monthly_house_payment, new_annual_house_payment, new_total_property_tax, new_total_state_income_tax, new_common_expenses, new_annual_expenses, current_state_income_tax_rate, spending_increase_percentage, new_state_income_tax_rate, current_monthly_common_expenses, current_salary, new_salary):
     st.subheader('Detailed Calculations')
     detailed_calculations = {
         'Calculation Steps': [
             f' - Current Annual House Payment: {current_monthly_house_payment} * 12 = ${current_annual_house_payment:,.2f}',
             f' - Current Annual Property Tax: ${current_total_property_tax:,.2f}',
-            f' - Current Annual State Income Tax: ${current_salary:,.2f} * {current_state_tax_rate / 100:.2f} = ${current_total_state_income_tax:,.2f}',
-            f' - Current Total Annual Expenses: ${current_annual_house_payment:,.2f} + ${current_total_property_tax:,.2f} + ${current_total_state_income_tax:,.2f} + ${current_annual_common_expenses:,.2f} = ${current_annual_expenses:,.2f}',
+            f' - Current Annual State Income Tax: ${current_salary:,.2f} * {current_state_income_tax_rate / 100:.2f} = ${current_total_state_income_tax:,.2f}',
+            f' - Current Total Annual Expenses: ${current_annual_house_payment:,.2f} (House Payment) + ${current_total_property_tax:,.2f} (Property Tax) + ${current_total_state_income_tax:,.2f} (State Income Tax) + ${current_annual_common_expenses:,.2f} (Common Expenses) = ${current_annual_expenses:,.2f}',
             f' - New Annual House Payment: {new_monthly_house_payment} * 12 = ${new_annual_house_payment:,.2f}',
             f' - New Annual Property Tax: ${new_total_property_tax:,.2f}',
-            f' - New Annual State Income Tax: ${required_new_salary:,.2f} * {new_state_tax_rate / 100:.2f} = ${new_total_state_income_tax:,.2f}',
+            f' - New Annual State Income Tax: ${new_salary:,.2f} * {new_state_income_tax_rate / 100:.2f} = ${new_total_state_income_tax:,.2f}',
             f' - New Annual Common Expenses: ${current_monthly_common_expenses} * 12 * (1 + {spending_increase_percentage / 100:.2f}) = ${new_common_expenses:,.2f}',
-            f' - New Total Annual Expenses: ${new_annual_house_payment:,.2f} + ${new_total_property_tax:,.2f} + ${new_total_state_income_tax:,.2f} + ${new_common_expenses:,.2f} = ${new_annual_expenses:,.2f}'
+            f' - New Total Annual Expenses: ${new_annual_house_payment:,.2f} (House Payment) + ${new_total_property_tax:,.2f} (Property Tax) + ${new_total_state_income_tax:,.2f} (State Income Tax) + ${new_common_expenses:,.2f} (Common Expenses) = ${new_annual_expenses:,.2f}'
         ]
     }
     for calc in detailed_calculations['Calculation Steps']:
@@ -126,12 +126,12 @@ def display_charts(current_annual_house_payment, current_total_property_tax, cur
 def main():
     st.title('Salary Comparison and Raise Calculator')
     
-    current_salary, current_monthly_house_payment, current_annual_property_tax, current_state_tax_rate, current_monthly_common_expenses, new_salary, new_monthly_house_payment, new_annual_property_tax, new_state_tax_rate, spending_increase_percentage = display_inputs()
+    current_salary, current_monthly_house_payment, current_annual_property_tax, current_state_income_tax_rate, current_monthly_common_expenses, new_salary, new_monthly_house_payment, new_annual_property_tax, new_state_income_tax_rate, spending_increase_percentage = display_inputs()
 
     if st.button('Calculate Required Salary'):
         try:
-            current_annual_expenses, current_annual_house_payment, current_total_property_tax, current_total_state_income_tax, current_annual_common_expenses, _ = calculate_annual_expenses(current_monthly_house_payment, current_annual_property_tax, current_state_tax_rate, current_monthly_common_expenses, 0, current_salary)
-            new_annual_expenses, new_annual_house_payment, new_total_property_tax, new_total_state_income_tax, _, new_common_expenses = calculate_annual_expenses(new_monthly_house_payment, new_annual_property_tax, new_state_tax_rate, current_monthly_common_expenses, spending_increase_percentage, new_salary)
+            current_annual_expenses, current_annual_house_payment, current_total_property_tax, current_total_state_income_tax, current_annual_common_expenses, _ = calculate_annual_expenses(current_monthly_house_payment, current_annual_property_tax, current_state_income_tax_rate, current_monthly_common_expenses, 0, current_salary)
+            new_annual_expenses, new_annual_house_payment, new_total_property_tax, new_total_state_income_tax, _, new_common_expenses = calculate_annual_expenses(new_monthly_house_payment, new_annual_property_tax, new_state_income_tax_rate, current_monthly_common_expenses, spending_increase_percentage, new_salary)
             
             additional_expenses = new_annual_expenses - current_annual_expenses
             required_new_salary = current_salary + additional_expenses
@@ -195,7 +195,7 @@ def main():
             
             detailed_calculations = display_detailed_calculations(current_monthly_house_payment, current_annual_house_payment, current_total_property_tax, current_total_state_income_tax, current_annual_expenses, current_annual_common_expenses,
                                                                   new_monthly_house_payment, new_annual_house_payment, new_total_property_tax, new_total_state_income_tax, new_common_expenses, new_annual_expenses,
-                                                                  current_state_tax_rate, spending_increase_percentage, new_state_tax_rate, current_monthly_common_expenses, current_salary, required_new_salary)
+                                                                  current_state_income_tax_rate, spending_increase_percentage, new_state_income_tax_rate, current_monthly_common_expenses, current_salary, new_salary)
             
             st.divider()
             
@@ -209,6 +209,7 @@ def main():
             st.error(f"Error: {e}")
         except ZeroDivisionError:
             st.error("Current salary cannot be zero. Please enter a valid current salary.")
+
 
     # Adding a divider and the legal disclaimer
     st.divider()
