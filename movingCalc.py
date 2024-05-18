@@ -48,7 +48,7 @@ def main():
         st.subheader('Results')
         results_data = {
             'Description': ['Current Annual Expenses', 'New Annual Expenses', 'Additional Expenses', 'Needed Annual Salary', 'Needed Monthly Salary'],
-            'Amount ($)': [current_annual_expenses, new_annual_expenses, additional_expenses, required_new_salary, monthly_required_new_salary]
+            'Amount ($)': [round(current_annual_expenses, 2), round(new_annual_expenses, 2), round(additional_expenses, 2), round(required_new_salary, 2), round(monthly_required_new_salary, 2)]
         }
         results_df = pd.DataFrame(results_data)
         st.table(results_df)
@@ -57,7 +57,7 @@ def main():
         st.subheader('Breakdown of Additional Expenses')
         breakdown_data = {
             'Description': ['New Annual House Payment', 'New Annual Property Tax', 'New Annual State Tax', 'Increase in Common Spending Categories'],
-            'Amount ($)': [new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_spending_increase]
+            'Amount ($)': [round(new_annual_house_payment, 2), round(new_total_property_tax, 2), round(new_total_state_tax, 2), round(new_spending_increase, 2)]
         }
         breakdown_df = pd.DataFrame(breakdown_data)
         st.table(breakdown_df)
@@ -81,8 +81,8 @@ def main():
         st.subheader('Comparison of Current and New Annual Expenses')
         expense_comparison_data = {
             'Category': ['House Payment', 'Property Tax', 'State Tax', 'Spending Increase'],
-            'Current Annual ($)': [current_annual_house_payment, current_total_property_tax, current_total_state_tax, current_spending_increase],
-            'New Annual ($)': [new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_spending_increase]
+            'Current Annual ($)': [round(current_annual_house_payment, 2), round(current_total_property_tax, 2), round(current_total_state_tax, 2), round(current_spending_increase, 2)],
+            'New Annual ($)': [round(new_annual_house_payment, 2), round(new_total_property_tax, 2), round(new_total_state_tax, 2), round(new_spending_increase, 2)]
         }
         expense_comparison_df = pd.DataFrame(expense_comparison_data)
         fig = px.bar(expense_comparison_df, x='Category', y=['Current Annual ($)', 'New Annual ($)'], barmode='group', title='Comparison of Current and New Annual Expenses by Category')
@@ -92,7 +92,7 @@ def main():
         st.subheader('Proportion of Each Category in New Annual Expenses')
         new_expense_proportion_data = {
             'Category': ['House Payment', 'Property Tax', 'State Tax', 'Spending Increase'],
-            'New Annual ($)': [new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_spending_increase]
+            'New Annual ($)': [round(new_annual_house_payment, 2), round(new_total_property_tax, 2), round(new_total_state_tax, 2), round(new_spending_increase, 2)]
         }
         new_expense_proportion_df = pd.DataFrame(new_expense_proportion_data)
         fig = px.pie(new_expense_proportion_df, values='New Annual ($)', names='Category', title='Proportion of Each Category in New Annual Expenses')
