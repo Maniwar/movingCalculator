@@ -1,3 +1,11 @@
+import streamlit as st
+import pandas as pd
+import plotly.express as px
+from io import BytesIO
+
+st.set_page_config(layout="wide")
+
+
 # Helper function to calculate annual expenses
 def calculate_annual_expenses(monthly_payment, state_income_tax_rate, current_monthly_common_expenses, spending_increase_percentage, salary):
     annual_house_payment = monthly_payment * 12
