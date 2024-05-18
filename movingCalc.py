@@ -145,11 +145,14 @@ def main():
             st.markdown(f"<h2 style='color: red;'>**Needed Annual Salary: ${required_new_salary:,.2f}**</h2>", unsafe_allow_html=True)
             st.markdown(f"<h2 style='color: red;'>**Needed Monthly Salary: ${monthly_required_new_salary:,.2f}**</h2>", unsafe_allow_html=True)
             st.markdown(f"<h2 style='color: red;'>**Percentage Increase: {percentage_increase:.2f}%**</h2>", unsafe_allow_html=True)
+           
+            st.divider()
             
             breakdown_df = display_breakdown(new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_common_expenses)
             detailed_calculations = display_detailed_calculations(current_monthly_house_payment, current_annual_house_payment, current_total_property_tax, current_total_state_tax, current_annual_expenses, current_annual_common_expenses,
                                                                   new_monthly_house_payment, new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_common_expenses, new_annual_expenses,
                                                                   current_state_tax_rate, spending_increase_percentage, new_state_tax_rate, current_monthly_common_expenses)
+            st.divider()
             display_charts(current_annual_house_payment, current_total_property_tax, current_total_state_tax, current_annual_common_expenses, new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_common_expenses)
     
             excel_report = create_excel_report(results_df, breakdown_df, detailed_calculations)
