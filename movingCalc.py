@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import xlsxwriter
 from io import BytesIO
 
 st.set_page_config(layout="wide")
@@ -130,7 +129,7 @@ def main():
         fig = px.pie(new_expense_proportion_df, values='New Annual ($)', names='Category', title='Proportion of Each Category in New Annual Expenses')
         st.plotly_chart(fig)
 
-# Create Excel report and provide download link
+        # Create Excel report and provide download link
         excel_report = create_excel_report(results_df, breakdown_df, detailed_calculations)
         st.download_button(
             label="Download Report",
