@@ -57,11 +57,7 @@ def display_inputs():
     return current_salary, current_monthly_house_payment, current_annual_property_tax, current_state_tax_rate, current_monthly_common_expenses, new_monthly_house_payment, new_annual_property_tax, new_state_tax_rate, spending_increase_percentage
 
 # Function to display results
-def display_results(current_annual_expenses, new_annual_expenses, additional_expenses, required_new_salary, monthly_required_new_salary, percentage_increase):
-    st.subheader('Results')
-    st.markdown(f"## **Needed Annual Salary: ${required_new_salary:,.2f}**")
-    st.markdown(f"## **Needed Monthly Salary: ${monthly_required_new_salary:,.2f}**")
-    st.markdown(f"## **Percentage Increase: {percentage_increase:.2f}%**")
+def display_results(current_annual_expenses, new_annual_expenses, additional_expenses):
     results_data = {
         'Description': ['Current Annual Expenses', 'New Annual Expenses', 'Additional Expenses'],
         'Amount ($)': [f'{current_annual_expenses:,.2f}', f'{new_annual_expenses:,.2f}', f'{additional_expenses:,.2f}']
@@ -140,11 +136,11 @@ def main():
         percentage_increase = ((required_new_salary - current_salary) / current_salary) * 100
         
         st.subheader('Results')
-        st.markdown(f"## **Needed Annual Salary: ${required_new_salary:,.2f}**")
-        st.markdown(f"## **Needed Monthly Salary: ${monthly_required_new_salary:,.2f}**")
-        st.markdown(f"## **Percentage Increase: {percentage_increase:.2f}%**")
+        st.markdown(f"<h2 style='color: red;'>**Needed Annual Salary: ${required_new_salary:,.2f}**</h2>", unsafe_allow_html=True)
+        st.markdown(f"<h2 style='color: red;'>**Needed Monthly Salary: ${monthly_required_new_salary:,.2f}**</h2>", unsafe_allow_html=True)
+        st.markdown(f"<h2 style='color: red;'>**Percentage Increase: {percentage_increase:.2f}%**</h2>", unsafe_allow_html=True)
 
-        results_df = display_results(current_annual_expenses, new_annual_expenses, additional_expenses, required_new_salary, monthly_required_new_salary, percentage_increase)
+        results_df = display_results(current_annual_expenses, new_annual_expenses, additional_expenses)
         breakdown_df = display_breakdown(new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_common_expenses)
         detailed_calculations = display_detailed_calculations(current_monthly_house_payment, current_annual_house_payment, current_total_property_tax, current_total_state_tax, current_annual_expenses, current_annual_common_expenses,
                                                               new_monthly_house_payment, new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_common_expenses, new_annual_expenses,
