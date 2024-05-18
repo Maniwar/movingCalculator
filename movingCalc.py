@@ -136,9 +136,9 @@ def main():
         percentage_increase = ((required_new_salary - current_salary) / current_salary) * 100
         
         st.subheader('Results')
-        st.markdown(f"<h2 style='color: red;'>**Needed Annual Salary: ${required_new_salary:,.2f}**</h2>", unsafe_allow_html=True)
-        st.markdown(f"<h2 style='color: red;'>**Needed Monthly Salary: ${monthly_required_new_salary:,.2f}**</h2>", unsafe_allow_html=True)
-        st.markdown(f"<h2 style='color: red;'>**Percentage Increase: {percentage_increase:.2f}%**</h2>", unsafe_allow_html=True)
+        st.markdown(f"<h3 style='color: red;'>Needed Annual Salary: ${required_new_salary:,.2f}**</h2>", unsafe_allow_html=True)
+        st.markdown(f"<h3 style='color: red;'>Needed Monthly Salary: ${monthly_required_new_salary:,.2f}**</h2>", unsafe_allow_html=True)
+        st.markdown(f"<h3 style='color: red;'>Percentage Increase: {percentage_increase:.2f}%**</h2>", unsafe_allow_html=True)
 
         results_df = display_results(current_annual_expenses, new_annual_expenses, additional_expenses)
         breakdown_df = display_breakdown(new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_common_expenses)
