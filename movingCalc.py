@@ -16,23 +16,26 @@ def calculate_annual_expenses(monthly_payment, annual_property_tax, state_tax_ra
 
 # Function to create a downloadable Excel file
 def create_excel_report(results_df, breakdown_df, detailed_calculations):
-    output = BytesIO()
-    writer = pd.ExcelWriter(output, engine='xlsxwriter')
-    results_df.to_excel(writer, index=False, sheet_name='Results')
-    breakdown_df.to_excel(writer, index=False, sheet_name='Breakdown')
-    workbook = writer.book
-    detailed_worksheet = workbook.add_worksheet('Detailed Calculations')
-    row = 0
-    for section, calculations in detailed_calculations.items():
-        detailed_worksheet.write(row, 0, section)
-        row += 1
-        for calc in calculations:
-            detailed_worksheet.write(row, 0, calc)
-            row += 1
-        row += 1
-    writer.save()
-    output.seek(0)
-    return output
+    try:
+        output = BytesIO()
+        with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+            results_df.to_excel(writer, index=False, sheet_name='Results')
+            breakdown_df.to_excel(writer, index=False, sheet_name='Breakdown')
+            workbook = writer.book
+            detailed_worksheet = workbook.add_worksheet('Detailed Calculations')
+            row = 0
+            for section, calculations in detailed_calculations.items():
+                detailed_worksheet.write(row, 0, section)
+                row += 1
+                for calc in calculations:
+                    detailed_worksheet.write(row, 0, calc)
+                    row += 1
+                row += 1
+        output.seek(0)
+        return output
+    except Exception as e:
+        st.error(f"Error creating Excel report: {e}")
+        return None
 
 # Function to display inputs
 def display_inputs():
@@ -138,7 +141,8 @@ def main():
         display_charts(current_annual_house_payment, current_total_property_tax, current_total_state_tax, current_spending_increase, new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_spending_increase)
 
         excel_report = create_excel_report(results_df, breakdown_df, detailed_calculations)
-        st.download_button(label="Download Report", data=excel_report, file_name="salary_comparison_report.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        if excel_report:
+            st.download_button(label="Download Report", data=excel_report, file_name="salary_comparison_report.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
 if __name__ == "__main__":
     main()
