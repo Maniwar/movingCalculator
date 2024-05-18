@@ -84,20 +84,21 @@ def display_detailed_calculations(current_monthly_house_payment, current_annual_
     st.subheader('Detailed Calculations')
     detailed_calculations = {
         'Calculation Steps': [
-            f' - Current Annual House Payment: {current_monthly_house_payment} * 12 = ${current_annual_house_payment:,.2f}',
+            f' - Current Annual House Payment: {current_monthly_house_payment} (monthly house payment) * 12 = ${current_annual_house_payment:,.2f}',
             f' - Current Annual Property Tax: ${current_total_property_tax:,.2f}',
-            f' - Current Annual State Income Tax: ${current_salary:,.2f} * {current_state_income_tax_rate / 100:.2f} = ${current_total_state_income_tax:,.2f}',
+            f' - Current Annual State Income Tax: ${current_salary:,.2f} (current salary) * {current_state_income_tax_rate / 100:.2f} = ${current_total_state_income_tax:,.2f}',
             f' - Current Total Annual Expenses: ${current_annual_house_payment:,.2f} (House Payment) + ${current_total_property_tax:,.2f} (Property Tax) + ${current_total_state_income_tax:,.2f} (State Income Tax) + ${current_annual_common_expenses:,.2f} (Common Expenses) = ${current_annual_expenses:,.2f}',
-            f' - New Annual House Payment: {new_monthly_house_payment} * 12 = ${new_annual_house_payment:,.2f}',
+            f' - New Annual House Payment: {new_monthly_house_payment} (new monthly house payment) * 12 = ${new_annual_house_payment:,.2f}',
             f' - New Annual Property Tax: ${new_total_property_tax:,.2f}',
-            f' - New Annual State Income Tax: ${new_salary:,.2f} * {new_state_income_tax_rate / 100:.2f} = ${new_total_state_income_tax:,.2f}',
-            f' - New Annual Common Expenses: ${current_monthly_common_expenses} * 12 * (1 + {spending_increase_percentage / 100:.2f}) = ${new_common_expenses:,.2f}',
+            f' - New Annual State Income Tax: ${new_salary:,.2f} (desired new salary) * {new_state_income_tax_rate / 100:.2f} = ${new_total_state_income_tax:,.2f}',
+            f' - New Annual Common Expenses: ${current_monthly_common_expenses} (current monthly common expenses) * 12 * (1 + {spending_increase_percentage / 100:.2f}) = ${new_common_expenses:,.2f}',
             f' - New Total Annual Expenses: ${new_annual_house_payment:,.2f} (House Payment) + ${new_total_property_tax:,.2f} (Property Tax) + ${new_total_state_income_tax:,.2f} (State Income Tax) + ${new_common_expenses:,.2f} (Common Expenses) = ${new_annual_expenses:,.2f}'
         ]
     }
     for calc in detailed_calculations['Calculation Steps']:
         st.write(calc)
     return detailed_calculations
+
 
 # Function to display charts
 def display_charts(current_annual_house_payment, current_total_property_tax, current_total_state_income_tax, current_annual_common_expenses,
