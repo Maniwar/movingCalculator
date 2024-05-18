@@ -127,29 +127,39 @@ def main():
     current_salary, current_monthly_house_payment, current_annual_property_tax, current_state_tax_rate, current_monthly_common_expenses, new_monthly_house_payment, new_annual_property_tax, new_state_tax_rate, spending_increase_percentage = display_inputs()
 
     if st.button('Calculate Required Salary'):
-        current_annual_expenses, current_annual_house_payment, current_total_property_tax, current_total_state_tax, current_annual_common_expenses, _ = calculate_annual_expenses(current_monthly_house_payment, current_annual_property_tax, current_state_tax_rate, current_monthly_common_expenses, 0)
-        new_annual_expenses, new_annual_house_payment, new_total_property_tax, new_total_state_tax, _, new_common_expenses = calculate_annual_expenses(new_monthly_house_payment, new_annual_property_tax, new_state_tax_rate, current_monthly_common_expenses, spending_increase_percentage)
-        
-        additional_expenses = new_annual_expenses - current_annual_expenses
-        required_new_salary = current_salary + additional_expenses
-        monthly_required_new_salary = required_new_salary / 12
-        percentage_increase = ((required_new_salary - current_salary) / current_salary) * 100
-        
-        st.subheader('Results')
-        st.markdown(f"<h3 style='color: red;'>Needed Annual Salary: ${required_new_salary:,.2f}</h3>", unsafe_allow_html=True)
-        st.markdown(f"<h3 style='color: red;'>Needed Monthly Salary: ${monthly_required_new_salary:,.2f}</h3>", unsafe_allow_html=True)
-        st.markdown(f"<h3 style='color: red;'>Percentage Increase: {percentage_increase:.2f}%</h3>", unsafe_allow_html=True)
-
-        results_df = display_results(current_annual_expenses, new_annual_expenses, additional_expenses)
-        breakdown_df = display_breakdown(new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_common_expenses)
-        detailed_calculations = display_detailed_calculations(current_monthly_house_payment, current_annual_house_payment, current_total_property_tax, current_total_state_tax, current_annual_expenses, current_annual_common_expenses,
-                                                              new_monthly_house_payment, new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_common_expenses, new_annual_expenses,
-                                                              current_state_tax_rate, spending_increase_percentage, new_state_tax_rate, current_monthly_common_expenses)
-        display_charts(current_annual_house_payment, current_total_property_tax, current_total_state_tax, current_annual_common_expenses, new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_common_expenses)
-
-        excel_report = create_excel_report(results_df, breakdown_df, detailed_calculations)
-        if excel_report:
-            st.download_button(label="Download Report", data=excel_report, file_name="salary_comparison_report.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        try:
+            current_annual_expenses, current_annual_house_payment, current_total_property_tax, current_total_state_tax, current_annual_common_expenses, _ = calculate_annual_expenses(current_monthly_house_payment, current_annual_property_tax, current_state_tax_rate, current_monthly_common_expenses, 0)
+            new_annual_expenses, new_annual_house_payment, new_total_property_tax, new_total_state_tax, _, new_common_expenses = calculate_annual_expenses(new_monthly_house_payment, new_annual_property_tax, new_state_tax_rate, current_monthly_common_expenses, spending_increase_percentage)
+            
+            additional_expenses = new_annual_expenses - current_annual_expenses
+            required_new_salary = current_salary + additional_expenses
+            monthly_required_new_salary = required_new_salary / 12
+            
+            if current_salary == 0:
+                raise ValueError("Current salary cannot be zero.")
+                
+            percentage_increase = ((required_new_salary - current_salary) / current_salary) * 100
+            
+            results_df = display_results(current_annual_expenses, new_annual_expenses, additional_expenses)
+            
+            st.markdown(f"<h2 style='color: red;'>**Needed Annual Salary: ${required_new_salary:,.2f}**</h2>", unsafe_allow_html=True)
+            st.markdown(f"<h2 style='color: red;'>**Needed Monthly Salary: ${monthly_required_new_salary:,.2f}**</h2>", unsafe_allow_html=True)
+            st.markdown(f"<h2 style='color: red;'>**Percentage Increase: {percentage_increase:.2f}%**</h2>", unsafe_allow_html=True)
+            
+            breakdown_df = display_breakdown(new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_common_expenses)
+            detailed_calculations = display_detailed_calculations(current_monthly_house_payment, current_annual_house_payment, current_total_property_tax, current_total_state_tax, current_annual_expenses, current_annual_common_expenses,
+                                                                  new_monthly_house_payment, new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_common_expenses, new_annual_expenses,
+                                                                  current_state_tax_rate, spending_increase_percentage, new_state_tax_rate, current_monthly_common_expenses)
+            display_charts(current_annual_house_payment, current_total_property_tax, current_total_state_tax, current_annual_common_expenses, new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_common_expenses)
+    
+            excel_report = create_excel_report(results_df, breakdown_df, detailed_calculations)
+            if excel_report:
+                st.download_button(label="Download Report", data=excel_report, file_name="salary_comparison_report.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                
+        except ValueError as e:
+            st.error(f"Error: {e}")
+        except ZeroDivisionError:
+            st.error("Current salary cannot be zero. Please enter a valid current salary.")
 
 if __name__ == "__main__":
     main()
