@@ -53,7 +53,7 @@ def display_inputs():
         new_monthly_house_payment = st.number_input('Monthly house payment ($)', min_value=0, step=100, format='%d', key='new_monthly_house_payment')
         new_annual_property_tax = st.number_input('Annual property tax ($)', min_value=0, step=100, format='%d', key='new_annual_property_tax')
         new_state_tax_rate = st.number_input('State tax rate (%)', min_value=0.0, max_value=100.0, step=0.01, format='%.2f', key='new_state_tax_rate')
-        spending_increase_percentage = st.number_input('Increase in spending (%)', min_value=0.0, max_value=100.0, step=0.01, format='%.2f', key='spending_increase_percentage')
+        spending_increase_percentage = st.number_input('Increase in spending (%) for current monthly household and utility expenses', min_value=0.0, max_value=100.0, step=0.01, format='%.2f', key='spending_increase_percentage')
     return current_salary, current_monthly_house_payment, current_annual_property_tax, current_state_tax_rate, current_monthly_common_expenses, new_monthly_house_payment, new_annual_property_tax, new_state_tax_rate, spending_increase_percentage
 
 # Function to display results
