@@ -67,11 +67,11 @@ def display_results(current_annual_expenses, new_annual_expenses, additional_exp
     return results_df
 
 # Function to display breakdown of additional expenses
-def display_breakdown(new_annual_house_payment, new_total_state_income_tax, new_common_expenses):
+def display_breakdown(current_annual_common_expenses, new_annual_house_payment, new_total_state_income_tax, new_common_expenses):
     st.subheader('Breakdown of Additional Expenses')
     breakdown_data = {
-        'Description': ['New Annual House Payment', 'New Annual State Income Tax', 'New Annual Common Expenses'],
-        'Amount ($)': [f'{new_annual_house_payment:,.2f}', f'{new_total_state_income_tax:,.2f}', f'{new_common_expenses:,.2f}']
+        'Description': ['Current Annual Common Expenses', 'New Annual House Payment', 'New Annual State Income Tax', 'New Annual Common Expenses'],
+        'Amount ($)': [f'{current_annual_common_expenses:,.2f}', f'{new_annual_house_payment:,.2f}', f'{new_total_state_income_tax:,.2f}', f'{new_common_expenses:,.2f}']
     }
     breakdown_df = pd.DataFrame(breakdown_data)
     st.table(breakdown_df)
@@ -116,6 +116,7 @@ def display_detailed_calculations(current_monthly_house_payment, current_annual_
             f'<h4><i class="fas fa-home fa-icon"></i>Current Annual House Payment:</h4> <p>{current_monthly_house_payment} (monthly house payment) * 12 = ${current_annual_house_payment:,.2f}</p>',
             f'<h4><i class="fas fa-landmark fa-icon"></i>Current Annual Property Tax:</h4> <p>${current_annual_property_tax:,.2f}</p>',
             f'<h4><i class="fas fa-file-invoice-dollar fa-icon"></i>Current Annual State Income Tax:</h4> <p>${current_salary:,.2f} (current salary) * {current_state_income_tax_rate / 100:.2f} = ${current_total_state_income_tax:,.2f}</p>',
+            f'<h4><i class="fas fa-calculator fa-icon"></i>Current Annual Common Expenses:</h4> <p>${current_monthly_common_expenses} (current monthly common expenses) * 12 = ${current_annual_common_expenses:,.2f}</p>',
             f'<h4><i class="fas fa-calculator fa-icon"></i>Current Total Annual Expenses:</h4> <p>${current_annual_house_payment:,.2f} (House Payment) + ${current_annual_property_tax:,.2f} (Property Tax) + ${current_total_state_income_tax:,.2f} (State Income Tax) + ${current_annual_common_expenses:,.2f} (Common Expenses) = ${current_annual_expenses:,.2f}</p>',
             f'<h4><i class="fas fa-home fa-icon"></i>New Annual House Payment:</h4> <p>{new_monthly_house_payment} (new monthly house payment) * 12 = ${new_annual_house_payment:,.2f}</p>',
             f'<h4><i class="fas fa-landmark fa-icon"></i>New Annual Property Tax:</h4> <p>${new_annual_property_tax:,.2f}</p>',
@@ -221,7 +222,7 @@ def main():
             st.divider()
             
             results_df = display_results(current_annual_expenses, new_annual_expenses, net_new_expenses)
-            breakdown_df = display_breakdown(new_annual_house_payment, new_total_state_income_tax, new_common_expenses)
+            breakdown_df = display_breakdown(current_annual_common_expenses, new_annual_house_payment, new_total_state_income_tax, new_common_expenses)
 
             st.divider()
             
