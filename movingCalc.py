@@ -140,7 +140,7 @@ def main():
                 
             percentage_increase = ((required_new_salary - current_salary) / current_salary) * 100
             
-            st.title('Results')
+            st.subheader('Results')
             results_df = display_results(current_annual_expenses, new_annual_expenses, additional_expenses)
             
             st.markdown(f"<h2 style='color: red;'>**Needed Annual Salary: ${required_new_salary:,.2f}**</h2>", unsafe_allow_html=True)
