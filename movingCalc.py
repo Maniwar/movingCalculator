@@ -78,8 +78,8 @@ def display_breakdown(new_annual_house_payment, new_total_state_income_tax, new_
     return breakdown_df
 
 # Function to display detailed calculations
-def display_detailed_calculations(current_monthly_house_payment, current_annual_house_payment, current_total_state_income_tax, current_annual_expenses, current_annual_common_expenses,
-                                  new_monthly_house_payment, new_annual_house_payment, new_total_state_income_tax, new_common_expenses, new_annual_expenses, current_state_income_tax_rate, spending_increase_percentage, new_state_income_tax_rate, current_monthly_common_expenses, current_salary, new_salary):
+def display_detailed_calculations(current_monthly_house_payment, current_annual_house_payment, current_annual_property_tax, current_total_state_income_tax, current_annual_expenses, current_annual_common_expenses,
+                                  new_monthly_house_payment, new_annual_house_payment, new_annual_property_tax, new_total_state_income_tax, new_common_expenses, new_annual_expenses, current_state_income_tax_rate, spending_increase_percentage, new_state_income_tax_rate, current_monthly_common_expenses, current_salary, new_salary):
     st.subheader('Detailed Calculations')
 
     # Add custom styles
@@ -121,7 +121,7 @@ def display_detailed_calculations(current_monthly_house_payment, current_annual_
             f'<h4><i class="fas fa-landmark fa-icon"></i>New Annual Property Tax:</h4> <p>${new_annual_property_tax:,.2f}</p>',
             f'<h4><i class="fas fa-file-invoice-dollar fa-icon"></i>New Annual State Income Tax:</h4> <p>${new_salary:,.2f} (desired new salary) * {new_state_income_tax_rate / 100:.2f} = ${new_total_state_income_tax:,.2f}</p>',
             f'<h4><i class="fas fa-calculator fa-icon"></i>New Annual Common Expenses:</h4> <p>${current_monthly_common_expenses} (current monthly common expenses) * 12 * (1 + {spending_increase_percentage / 100:.2f}) = ${new_common_expenses:,.2f}</p>',
-            f'<h4><i class="fas fa-calculator fa-icon"></i>New Total Annual Expenses:</h4> <p>${new_annual_house_payment:,.2f} (House Payment) + ${new_annual_property_tax:,.2f} (Property Tax) + ${new_total_state_income_tax:,.2f} (State Income Tax) + ${new_common_expenses:,.2f} (Common Expenses) = ${new_annual_expenses:,.2f}</p>'
+            f'<h4><i class="fas fa-calculator fa-icon"></i>New Total Annual Expenses:</h4> <p>${new_annual_house_payment:,.2f} (House Payment) + ${new_total_state_income_tax:,.2f} (State Income Tax) + ${new_common_expenses:,.2f} (Common Expenses) = ${new_annual_expenses:,.2f}</p>'
         ]
     }
 
@@ -129,7 +129,6 @@ def display_detailed_calculations(current_monthly_house_payment, current_annual_
         st.markdown(f'<div class="calc-box">{calc}</div>', unsafe_allow_html=True)
 
     return detailed_calculations
-
 
 # Function to display charts
 def display_charts(current_annual_house_payment, current_total_state_income_tax, current_annual_common_expenses,
@@ -163,10 +162,11 @@ def main():
     if st.button('Calculate Required Salary'):
         try:
             current_annual_expenses, current_annual_house_payment, current_total_state_income_tax, current_annual_common_expenses, _ = calculate_annual_expenses(current_monthly_house_payment, current_state_income_tax_rate, current_monthly_common_expenses, 0, current_salary)
-            new_annual_expenses, new_annual_house_payment, new_total_state_income_tax, _, new_common_expenses = calculate_annual_expenses(new_monthly_house_payment, new_state_income_tax_rate, current_monthly_common_expenses, spending_increase_percentage, new_salary)
+            new_annual_expenses, new_annual_house_payment, new_total_state_income_tax, new_common_expenses, _ = calculate_annual_expenses(new_monthly_house_payment, new_state_income_tax_rate, current_monthly_common_expenses, spending_increase_percentage, new_salary)
             
-            additional_expenses = new_annual_expenses - current_annual_expenses
-            required_new_salary = current_salary + additional_expenses
+            # Adjust for net new expenses
+            net_new_expenses = new_annual_expenses - current_annual_expenses
+            required_new_salary = current_salary + net_new_expenses
             monthly_required_new_salary = required_new_salary / 12
             
             if current_salary == 0:
@@ -220,13 +220,13 @@ def main():
 
             st.divider()
             
-            results_df = display_results(current_annual_expenses, new_annual_expenses, additional_expenses)
+            results_df = display_results(current_annual_expenses, new_annual_expenses, net_new_expenses)
             breakdown_df = display_breakdown(new_annual_house_payment, new_total_state_income_tax, new_common_expenses)
 
             st.divider()
             
-            detailed_calculations = display_detailed_calculations(current_monthly_house_payment, current_annual_house_payment, current_total_state_income_tax, current_annual_expenses, current_annual_common_expenses,
-                                                                  new_monthly_house_payment, new_annual_house_payment, new_total_state_income_tax, new_common_expenses, new_annual_expenses,
+            detailed_calculations = display_detailed_calculations(current_monthly_house_payment, current_annual_house_payment, current_annual_property_tax, current_total_state_income_tax, current_annual_expenses, current_annual_common_expenses,
+                                                                  new_monthly_house_payment, new_annual_house_payment, new_annual_property_tax, new_total_state_income_tax, new_common_expenses, new_annual_expenses,
                                                                   current_state_income_tax_rate, spending_increase_percentage, new_state_income_tax_rate, current_monthly_common_expenses, current_salary, new_salary)
             
             st.divider()
@@ -248,9 +248,8 @@ def main():
     with expander:
         st.markdown(
         """
-        <p style="font-size:14px;">Legal Statement</p>
         <p style="font-size:14px;">
-        This application ("App") is provided "as is" without any warranties, express or implied. The information provided by the App is intended to be used for informational purposes only and not as a substitute for professional advice, diagnosis, or treatment. Always seek the advice of your qualified financial advisor with any questions you may have regarding your finances. Never disregard professional advice or delay in seeking it because of something you have read on the App.
+        <b>Legal Statement:</b> This application ("App") is provided "as is" without any warranties, express or implied. The information provided by the App is intended to be used for informational purposes only and not as a substitute for professional advice, diagnosis, or treatment. Always seek the advice of your qualified financial advisor with any questions you may have regarding your finances. Never disregard professional advice or delay in seeking it because of something you have read on the App.
         </p>
         <p style="font-size:14px;">
         While we strive to provide accurate information, we make no representation and assume no responsibility for the accuracy of information on or available through the App.
@@ -264,9 +263,8 @@ def main():
         <p style="font-size:14px;">
         By using this App, you agree to abide by the terms of this legal statement.
         </p>
-        <p style="font-size:14px;">Data Privacy Statement</p>
         <p style="font-size:14px;">
-        This application ("App") respects your privacy. This statement outlines our practices regarding your data.
+        <b>Data Privacy Statement:</b> This application ("App") respects your privacy. This statement outlines our practices regarding your data.
         </p>
         <p style="font-size:14px;">
         <b>Information Collection:</b> The only data the App collects is the information you enter when you use the App. We do not collect any personal data, including contact information.
