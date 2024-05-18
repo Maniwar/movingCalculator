@@ -139,7 +139,8 @@ def main():
                 raise ValueError("Current salary cannot be zero.")
                 
             percentage_increase = ((required_new_salary - current_salary) / current_salary) * 100
-            
+
+            st.divider()
             st.subheader('Results')
             results_df = display_results(current_annual_expenses, new_annual_expenses, additional_expenses)
             
