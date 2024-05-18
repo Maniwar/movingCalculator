@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
+st.set_page_config(layout="wide")
+
 # Helper function to calculate annual expenses
 def calculate_annual_expenses(monthly_payment, annual_property_tax, state_tax_rate, spending_increase_percentage):
     # Annual house payment
@@ -11,7 +13,7 @@ def calculate_annual_expenses(monthly_payment, annual_property_tax, state_tax_ra
     # Total state tax
     total_state_tax = (annual_house_payment + total_property_tax) * (state_tax_rate / 100)
     # Increase in common spending categories
-    spending_increase = annual_house_payment * (spending_increase_percentage / 100)
+    spending_increase = (annual_house_payment + total_property_tax + total_state_tax) * (spending_increase_percentage / 100)
     # Total annual expenses
     total_annual_expenses = annual_house_payment + total_property_tax + total_state_tax + spending_increase
     return total_annual_expenses, annual_house_payment, total_property_tax, total_state_tax, spending_increase
@@ -72,7 +74,7 @@ def main():
         st.write(f' - New Annual House Payment: {new_monthly_house_payment} * 12 = ${new_annual_house_payment:,.2f}')
         st.write(f' - New Annual Property Tax: ${new_total_property_tax:,.2f}')
         st.write(f' - New Annual State Tax: (${new_annual_house_payment:,.2f} + ${new_total_property_tax:,.2f}) * {new_state_tax_rate / 100:.2f} = ${new_total_state_tax:,.2f}')
-        st.write(f' - Increase in Common Spending Categories: ${new_annual_house_payment:,.2f} * {spending_increase_percentage / 100:.2f} = ${new_spending_increase:,.2f}')
+        st.write(f' - Increase in Common Spending Categories: (${new_annual_house_payment:,.2f} + ${new_total_property_tax:,.2f} + ${new_total_state_tax:,.2f}) * {spending_increase_percentage / 100:.2f} = ${new_spending_increase:,.2f}')
         st.write(f' - New Total Annual Expenses: ${new_annual_house_payment:,.2f} + ${new_total_property_tax:,.2f} + ${new_total_state_tax:,.2f} + ${new_spending_increase:,.2f} = ${new_annual_expenses:,.2f}')
 
         # Bar chart comparing current and new annual expenses by category
