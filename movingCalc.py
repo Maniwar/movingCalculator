@@ -47,7 +47,7 @@ def display_inputs():
         current_monthly_house_payment = st.number_input('Monthly house payment ($)', min_value=0, step=100, format='%d', key='current_monthly_house_payment')
         current_annual_property_tax = st.number_input('Annual property tax ($)', min_value=0, step=100, format='%d', key='current_annual_property_tax')
         current_state_tax_rate = st.number_input('State tax rate (%)', min_value=0.0, max_value=100.0, step=0.01, format='%.2f', key='current_state_tax_rate')
-        current_monthly_common_expenses = st.number_input('Current monthly household and utility expenses ($)', min_value=0, step=100, format='%d', key='current_common_expenses')
+        current_monthly_common_expenses = st.number_input('Current monthly household and utility expenses ($)', min_value=0, step=100, format='%d', key='current_monthly_common_expenses')
     with col2:
         st.header('New Situation')
         new_monthly_house_payment = st.number_input('Monthly house payment ($)', min_value=0, step=100, format='%d', key='new_monthly_house_payment')
@@ -80,7 +80,7 @@ def display_breakdown(new_annual_house_payment, new_total_property_tax, new_tota
 
 # Function to display detailed calculations
 def display_detailed_calculations(current_monthly_house_payment, current_annual_house_payment, current_total_property_tax, current_total_state_tax, current_annual_expenses, current_annual_common_expenses,
-                                  new_monthly_house_payment, new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_common_expenses, new_annual_expenses, current_state_tax_rate, spending_increase_percentage, new_state_tax_rate):
+                                  new_monthly_house_payment, new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_common_expenses, new_annual_expenses, current_state_tax_rate, spending_increase_percentage, new_state_tax_rate, current_monthly_common_expenses):
     st.subheader('Detailed Calculations')
     detailed_calculations = {
         'Calculation Steps': [
@@ -139,7 +139,7 @@ def main():
         breakdown_df = display_breakdown(new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_common_expenses)
         detailed_calculations = display_detailed_calculations(current_monthly_house_payment, current_annual_house_payment, current_total_property_tax, current_total_state_tax, current_annual_expenses, current_annual_common_expenses,
                                                               new_monthly_house_payment, new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_common_expenses, new_annual_expenses,
-                                                              current_state_tax_rate, spending_increase_percentage, new_state_tax_rate)
+                                                              current_state_tax_rate, spending_increase_percentage, new_state_tax_rate, current_monthly_common_expenses)
         display_charts(current_annual_house_payment, current_total_property_tax, current_total_state_tax, current_annual_common_expenses, new_annual_house_payment, new_total_property_tax, new_total_state_tax, new_common_expenses)
 
         excel_report = create_excel_report(results_df, breakdown_df, detailed_calculations)
