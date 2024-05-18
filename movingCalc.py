@@ -146,9 +146,50 @@ def main():
             st.subheader('Results')
             results_df = display_results(current_annual_expenses, new_annual_expenses, additional_expenses)
             
-            st.markdown(f"<h2 style='color: red;'>Needed Annual Salary: ${required_new_salary:,.2f}</h2>", unsafe_allow_html=True)
-            st.markdown(f"<h2 style='color: red;'>Needed Monthly Salary: ${monthly_required_new_salary:,.2f}</h2>", unsafe_allow_html=True)
-            st.markdown(f"<h2 style='color: red;'>Percentage Increase: {percentage_increase:.2f}%</h2>", unsafe_allow_html=True)
+            # Include Font Awesome CSS
+            st.markdown(
+                """
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+                """,
+                unsafe_allow_html=True
+            )
+            
+            # Add custom styles
+            st.markdown(
+                """
+                <style>
+                .result-box {
+                    border: 2px solid red;
+                    padding: 10px;
+                    border-radius: 10px;
+                    text-align: center;
+                    background-color: #ffebeb;
+                }
+                .result-box h2 {
+                    color: red;
+                    font-weight: bold;
+                }
+                .result-box .fa-icon {
+                    font-size: 24px;
+                    margin-right: 10px;
+                }
+                </style>
+                """,
+                unsafe_allow_html=True
+            )
+            
+            # Display the results
+            st.markdown(
+                f"""
+                <div class="result-box">
+                    <h2><i class="fas fa-dollar-sign fa-icon"></i>Needed Annual Salary: ${required_new_salary:,.2f}</h2>
+                    <h2><i class="fas fa-calendar-alt fa-icon"></i>Needed Monthly Salary: ${monthly_required_new_salary:,.2f}</h2>
+                    <h2><i class="fas fa-percentage fa-icon"></i>Percentage Increase: {percentage_increase:.2f}%</h2>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
            
             st.divider()
             
