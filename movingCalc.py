@@ -6,13 +6,12 @@ from io import BytesIO
 st.set_page_config(layout="wide")
 
 # Helper function to calculate annual expenses
-def calculate_annual_expenses(monthly_payment, state_income_tax_rate, monthly_common_expenses, spending_increase_percentage, salary):
+def calculate_annual_expenses(monthly_payment, state_income_tax_rate, monthly_common_expenses, salary):
     annual_house_payment = monthly_payment * 12
     total_state_income_tax = salary * (state_income_tax_rate / 100)
     annual_common_expenses = monthly_common_expenses * 12
-    new_common_expenses = annual_common_expenses * (1 + spending_increase_percentage / 100)
-    total_annual_expenses = annual_house_payment + total_state_income_tax + new_common_expenses
-    return total_annual_expenses, annual_house_payment, total_state_income_tax, annual_common_expenses, new_common_expenses
+    total_annual_expenses = annual_house_payment + total_state_income_tax + annual_common_expenses
+    return total_annual_expenses, annual_house_payment, total_state_income_tax, annual_common_expenses
 
 # Function to create a downloadable Excel file
 def create_excel_report(results_df, breakdown_df, detailed_calculations):
@@ -162,8 +161,15 @@ def main():
 
     if st.button('Calculate Required Salary'):
         try:
-            current_annual_expenses, current_annual_house_payment, current_total_state_income_tax, current_annual_common_expenses, _ = calculate_annual_expenses(current_monthly_house_payment, current_state_income_tax_rate, current_monthly_common_expenses, 0, current_salary)
-            new_annual_expenses, new_annual_house_payment, new_total_state_income_tax, new_common_expenses, _ = calculate_annual_expenses(new_monthly_house_payment, new_state_income_tax_rate, current_monthly_common_expenses, spending_increase_percentage, new_salary)
+            # Calculate current annual expenses
+            current_annual_expenses, current_annual_house_payment, current_total_state_income_tax, current_annual_common_expenses = calculate_annual_expenses(current_monthly_house_payment, current_state_income_tax_rate, current_monthly_common_expenses, current_salary)
+
+            # Calculate new annual expenses without increase
+            new_annual_expenses, new_annual_house_payment, new_total_state_income_tax, _ = calculate_annual_expenses(new_monthly_house_payment, new_state_income_tax_rate, current_monthly_common_expenses, new_salary)
+            
+            # Calculate new common expenses with increase
+            new_common_expenses = current_monthly_common_expenses * 12 * (1 + spending_increase_percentage / 100)
+            new_annual_expenses += new_common_expenses
             
             # Adjust for net new expenses
             net_new_expenses = new_annual_expenses - current_annual_expenses
