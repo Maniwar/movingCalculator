@@ -66,11 +66,11 @@ def display_results(current_annual_expenses, new_annual_expenses, additional_exp
     return results_df
 
 # Function to display breakdown of additional expenses
-def display_breakdown(current_annual_common_expenses, new_annual_house_payment, new_total_state_income_tax, new_common_expenses):
+def display_breakdown(current_annual_common_expenses, new_annual_house_payment, new_total_state_income_tax, new_common_expenses, current_annual_property_tax, new_annual_property_tax):
     st.subheader('Breakdown of Additional Expenses')
     breakdown_data = {
-        'Description': ['Current Annual Common Expenses', 'New Annual House Payment', 'New Annual State Income Tax', 'New Annual Common Expenses'],
-        'Amount ($)': [f'{current_annual_common_expenses:,.2f}', f'{new_annual_house_payment:,.2f}', f'{new_total_state_income_tax:,.2f}', f'{new_common_expenses:,.2f}']
+        'Description': ['Current Annual Common Expenses', 'New Annual House Payment', 'New Annual State Income Tax', 'New Annual Common Expenses', 'Current Annual Property Tax', 'New Annual Property Tax'],
+        'Amount ($)': [f'{current_annual_common_expenses:,.2f}', f'{new_annual_house_payment:,.2f}', f'{new_total_state_income_tax:,.2f}', f'{new_common_expenses:,.2f}', f'{current_annual_property_tax:,.2f}', f'{new_annual_property_tax:,.2f}']
     }
     breakdown_df = pd.DataFrame(breakdown_data)
     st.table(breakdown_df)
@@ -78,7 +78,7 @@ def display_breakdown(current_annual_common_expenses, new_annual_house_payment, 
 
 # Function to display detailed calculations
 def display_detailed_calculations(current_monthly_house_payment, current_annual_house_payment, current_annual_property_tax, current_total_state_income_tax, current_annual_expenses, current_annual_common_expenses,
-                                  new_monthly_house_payment, new_annual_house_payment, new_annual_property_tax, new_total_state_income_tax, new_common_expenses, new_annual_expenses, current_state_income_tax_rate, spending_increase_percentage, new_state_income_tax_rate, current_monthly_common_expenses, current_salary, new_salary):
+                                  new_monthly_house_payment, new_annual_house_payment, new_annual_property_tax, new_total_state_income_tax, new_common_expenses, new_annual_expenses, current_state_income_tax_rate, spending_increase_percentage, new_state_income_tax_rate, current_monthly_common_expenses, current_salary, new_salary, net_new_expenses):
     st.subheader('Detailed Calculations')
 
     # Add custom styles
@@ -116,12 +116,13 @@ def display_detailed_calculations(current_monthly_house_payment, current_annual_
             f'<h4><i class="fas fa-landmark fa-icon"></i>Current Annual Property Tax:</h4> <p>${current_annual_property_tax:,.2f}</p>',
             f'<h4><i class="fas fa-file-invoice-dollar fa-icon"></i>Current Annual State Income Tax:</h4> <p>${current_salary:,.2f} (current salary) * {current_state_income_tax_rate / 100:.2f} = ${current_total_state_income_tax:,.2f}</p>',
             f'<h4><i class="fas fa-calculator fa-icon"></i>Current Annual Common Expenses:</h4> <p>${current_monthly_common_expenses} (current monthly common expenses) * 12 = ${current_annual_common_expenses:,.2f}</p>',
-            f'<h4><i class="fas fa-calculator fa-icon"></i>Current Total Annual Expenses:</h4> <p>${current_annual_house_payment:,.2f} (House Payment) + ${current_annual_property_tax:,.2f} (Property Tax) + ${current_total_state_income_tax:,.2f} (State Income Tax) + ${current_annual_common_expenses:,.2f} (Common Expenses) = ${current_annual_expenses:,.2f}</p>',
+            f'<h4><i class="fas fa-calculator fa-icon"></i>Current Total Annual Expenses:</h4> <p>${current_annual_house_payment:,.2f} (House Payment) + ${current_total_state_income_tax:,.2f} (State Income Tax) + ${current_annual_common_expenses:,.2f} (Common Expenses) = ${current_annual_expenses:,.2f}</p>',
             f'<h4><i class="fas fa-home fa-icon"></i>New Annual House Payment:</h4> <p>{new_monthly_house_payment} (new monthly house payment) * 12 = ${new_annual_house_payment:,.2f}</p>',
             f'<h4><i class="fas fa-landmark fa-icon"></i>New Annual Property Tax:</h4> <p>${new_annual_property_tax:,.2f}</p>',
             f'<h4><i class="fas fa-file-invoice-dollar fa-icon"></i>New Annual State Income Tax:</h4> <p>${new_salary:,.2f} (desired new salary) * {new_state_income_tax_rate / 100:.2f} = ${new_total_state_income_tax:,.2f}</p>',
             f'<h4><i class="fas fa-calculator fa-icon"></i>New Annual Common Expenses:</h4> <p>${current_monthly_common_expenses} (current monthly common expenses) * 12 * (1 + {spending_increase_percentage / 100:.2f}) = ${new_common_expenses:,.2f}</p>',
-            f'<h4><i class="fas fa-calculator fa-icon"></i>New Total Annual Expenses:</h4> <p>${new_annual_house_payment:,.2f} (House Payment) + ${new_total_state_income_tax:,.2f} (State Income Tax) + ${new_common_expenses:,.2f} (Common Expenses) = ${new_annual_expenses:,.2f}</p>'
+            f'<h4><i class="fas fa-calculator fa-icon"></i>New Total Annual Expenses:</h4> <p>${new_annual_house_payment:,.2f} (House Payment) + ${new_total_state_income_tax:,.2f} (State Income Tax) + ${new_common_expenses:,.2f} (Common Expenses) = ${new_annual_expenses:,.2f}</p>',
+            f'<h4><i class="fas fa-calculator fa-icon"></i>Net New Expenses:</h4> <p>${new_annual_expenses:,.2f} (New Total Annual Expenses) - ${current_annual_expenses:,.2f} (Current Total Annual Expenses) = ${net_new_expenses:,.2f}</p>'
         ]
     }
 
@@ -165,11 +166,11 @@ def main():
             current_annual_expenses, current_annual_house_payment, current_total_state_income_tax, current_annual_common_expenses = calculate_annual_expenses(current_monthly_house_payment, current_state_income_tax_rate, current_monthly_common_expenses, current_salary)
 
             # Calculate new annual expenses without increase
-            new_annual_expenses, new_annual_house_payment, new_total_state_income_tax, _ = calculate_annual_expenses(new_monthly_house_payment, new_state_income_tax_rate, current_monthly_common_expenses, new_salary)
+            new_annual_expenses_without_increase, new_annual_house_payment, new_total_state_income_tax, new_annual_common_expenses = calculate_annual_expenses(new_monthly_house_payment, new_state_income_tax_rate, current_monthly_common_expenses, new_salary)
             
             # Calculate new common expenses with increase
             new_common_expenses = current_monthly_common_expenses * 12 * (1 + spending_increase_percentage / 100)
-            new_annual_expenses += new_common_expenses
+            new_annual_expenses = new_annual_expenses_without_increase + (new_common_expenses - new_annual_common_expenses)
             
             # Adjust for net new expenses
             net_new_expenses = new_annual_expenses - current_annual_expenses
@@ -228,13 +229,13 @@ def main():
             st.divider()
             
             results_df = display_results(current_annual_expenses, new_annual_expenses, net_new_expenses)
-            breakdown_df = display_breakdown(current_annual_common_expenses, new_annual_house_payment, new_total_state_income_tax, new_common_expenses)
+            breakdown_df = display_breakdown(current_annual_common_expenses, new_annual_house_payment, new_total_state_income_tax, new_common_expenses, current_annual_property_tax, new_annual_property_tax)
 
             st.divider()
             
             detailed_calculations = display_detailed_calculations(current_monthly_house_payment, current_annual_house_payment, current_annual_property_tax, current_total_state_income_tax, current_annual_expenses, current_annual_common_expenses,
                                                                   new_monthly_house_payment, new_annual_house_payment, new_annual_property_tax, new_total_state_income_tax, new_common_expenses, new_annual_expenses,
-                                                                  current_state_income_tax_rate, spending_increase_percentage, new_state_income_tax_rate, current_monthly_common_expenses, current_salary, new_salary)
+                                                                  current_state_income_tax_rate, spending_increase_percentage, new_state_income_tax_rate, current_monthly_common_expenses, current_salary, new_salary, net_new_expenses)
             
             st.divider()
             
