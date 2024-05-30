@@ -18,7 +18,7 @@ def calculate_annual_expenses(monthly_payment, state_income_tax_rate, monthly_co
 def create_excel_report(results_df, breakdown_df, detailed_calculations):
     try:
         output = BytesIO()
-        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+        with pd.ExcelWriter(output, engine='xlswriter') as writer:
             results_df.to_excel(writer, index=False, sheet_name='Results')
             breakdown_df.to_excel(writer, index=False, sheet_name='Breakdown')
             workbook = writer.book
